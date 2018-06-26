@@ -20,7 +20,7 @@ JWTManager(app)
 
 # CORS
 from flask_cors import CORS
-CORS(app)
+CORS(app, supports_credentials=True)
 
 # Email
 from flask_mail import Mail

@@ -13,7 +13,7 @@ class Users(Resource):
     @jwt_required
     def post(self):
         current_user = get_jwt_identity()
-        return {'message': 'User registration'}
+        return {'message': 'THIS IS A SECRET!'}
 
 api = Api(users)
 api.add_resource(Users, '/Foo')
