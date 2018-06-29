@@ -1,19 +1,15 @@
 from flask import Blueprint, jsonify
-from flask.views import MethodView
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_csrf_token
-from flask_restful import Api, Resource
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_csrf_token, current_user
+from flask_restplus import Api, Resource, Namespace
 
-users = Blueprint('users', __name__)
+userapi = Namespace('users', description='Authorization API')
 
-
+@userapi.route('/Foo')
 class Users(Resource):
+    @jwt_required
     def get(self):
-        return {'user' : 'user'}
+        return {'message': 'Hi! {USER}. This is a GET response'.format(USER=current_user.username)}
 
     @jwt_required
     def post(self):
-        current_user = get_jwt_identity()
-        return {'message': 'THIS IS A SECRET!'}
-
-api = Api(users)
-api.add_resource(Users, '/Foo')
+        return {'message': 'Hi! {USER}'.format(USER=current_user.username)}

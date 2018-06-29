@@ -1,3 +1,3 @@
 # Mobile App API Backend
 
-Backend using Flask-Restful, Flask-JWT-Extended, and Mongoengine
+Backend using Flask-Restplus, Flask-JWT-Extended, and Mongoengine

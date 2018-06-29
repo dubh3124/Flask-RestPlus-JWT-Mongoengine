@@ -1,8 +1,6 @@
 import logging
 import os
 
-SERVER_NAME = os.environ.get('SERVER_NAME')
-
 class Config(object):
     def __init__(self):
         self.DEBUG = False
@@ -10,13 +8,13 @@ class Config(object):
         self.PRODUCTION = False
 
         self.SECRET_KEY = '{SECRET_KEY}'
-        self.SERVER_NAME = SERVER_NAME
-        self.JWT_SECRET_KEY='023894239j0fm302m3'
+        self.JWT_SECRET_KEY = '023894239j0fm302m3'
         self.JWT_TOKEN_LOCATION=['cookies']
-        # self.JWT_ACCESS_COOKIE_PATH = '/aut'
+        self.JWT_ACCESS_CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
+        self.JWT_ACCESS_COOKIE_PATH = '/auth'
         self.JWT_COOKIE_CSRF_PROTECT = True
-        # self.JWT_ACCESS_CSRF_COOKIE_PATH = '/auth'
-        self.JWT_COOKIE_DOMAIN ='dubh3124.com:5000'
+        self.JWT_ACCESS_CSRF_COOKIE_PATH = '/auth'
+        self.JWT_COOKIE_DOMAIN = 'dubh3124.com'
 
         self.LOG_LEVEL = logging.DEBUG
         # Uncomment and fill out for shared DB connection

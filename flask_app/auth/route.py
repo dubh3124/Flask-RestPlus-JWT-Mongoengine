@@ -1,18 +1,39 @@
 from flask import Blueprint, jsonify
-from flask_restful import Api, Resource, reqparse
+from flask_restplus import Api,Resource, Namespace, reqparse, fields
 from flask_app.users.model import User
-from flask_jwt_extended import (create_access_token, create_refresh_token, get_jwt_identity, get_raw_jwt, set_access_cookies,set_refresh_cookies, unset_access_cookies, unset_refresh_cookies, unset_jwt_cookies, jwt_refresh_token_required)
+from flask_app import jwt
+from flask_jwt_extended import (create_access_token, create_refresh_token, get_jwt_identity, set_access_cookies,set_refresh_cookies, unset_jwt_cookies, jwt_refresh_token_required)
 
-auth = Blueprint('auth', __name__)
+authapi = Namespace('auth', description='Authorization API')
 
-parser = reqparse.RequestParser()
-parser.add_argument('username', help='This field cannot be blank', required=True)
-parser.add_argument('password', help='This field cannot be blank', required=True)
+creds = authapi.model('Credentials', {
+    'username': fields.String(required=True, description='Username'),
+    'password': fields.String(required=True, description='Password'),
+})
+
 
 user = User()
+
+@jwt.user_loader_callback_loader
+def user_loader_callback(identity):
+    if not User.objects(username__exact=identity):
+        return None
+
+    return User.objects(username__exact=identity).get()
+
+@jwt.user_loader_error_loader
+def custom_user_loader_error(identity):
+    ret = {
+        "msg": "User {} not found".format(identity)
+    }
+    return jsonify(ret), 404
+
+@authapi.route('/registration')
+# @api.doc(False)
 class UserRegistration(Resource):
+    @authapi.expect(creds)
     def post(self):
-        data = parser.parse_args()
+        data = authapi.payload
 
         try:
             user.username = data['username']
@@ -36,10 +57,11 @@ class UserRegistration(Resource):
             else:
                 return {'message': 'Oops'}
 
-
+@authapi.route('/login')
 class UserLogin(Resource):
+    @authapi.expect(creds)
     def post(self):
-        data = parser.parse_args()
+        data = authapi.payload
         current_user = User.objects(username__exact=data['username'])
         if not current_user:
             return {'message': 'User {} doesn\'t exist'.format(data['username'])}
@@ -61,6 +83,7 @@ class UserLogin(Resource):
         else:
             return {'message': 'Wrong credentials'}
 
+@authapi.route('/logout')
 class UserLogout(Resource):
     def post(self):
         try:
@@ -70,6 +93,7 @@ class UserLogout(Resource):
         except:
             return jsonify({'error':'Something went wrong deleting token'})
 
+@authapi.route('/token/refresh')
 class TokenRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):
@@ -81,9 +105,3 @@ class TokenRefresh(Resource):
             return resp
         except:
             return jsonify({'error':'Something went wrong refreshing token'})
-
-api = Api(auth)
-api.add_resource(UserRegistration, '/registration')
-api.add_resource(UserLogin, '/login')
-api.add_resource(UserLogout, '/logout')
-api.add_resource(TokenRefresh, '/token/refresh')
