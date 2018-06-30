@@ -37,7 +37,7 @@ app.db.init_app(app)
 # Business Logic
 # http://flask.pocoo.org/docs/patterns/packages/
 # http://flask.pocoo.org/docs/blueprints/
-from flask_app.api_init import api1
+from flask_app.apiv1.__init__ import api1
 app.register_blueprint(api1)
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restplus import Api
-from flask_app.users.route import userapi
-from flask_app.auth.route import authapi
+from flask_app.apiv1.user import userapi
+from flask_app.apiv1.auth import authapi
 
 api1 = Blueprint('api1', __name__, url_prefix='/api')
 api = Api(api1,

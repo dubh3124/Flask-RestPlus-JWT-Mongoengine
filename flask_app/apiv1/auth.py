@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify
-from flask_restplus import Api,Resource, Namespace, reqparse, fields
-from flask_app.users.model import User
+from flask import jsonify
+from flask_restplus import Resource, Namespace, fields
+from flask_app.models.user import User
 from flask_app import jwt
 from flask_jwt_extended import (create_access_token, create_refresh_token, get_jwt_identity, set_access_cookies,set_refresh_cookies, unset_jwt_cookies, jwt_refresh_token_required)
 
