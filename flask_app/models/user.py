@@ -6,8 +6,8 @@ from passlib.hash import pbkdf2_sha256 as sha256
 class User(FlaskDocument):
     email = db.StringField(max_length=255)
     username = db.StringField(max_length=255, unique=True)
-    first_name = db.StringField(max_length=255)
-    last_name = db.StringField(max_length=255)
+    firstname = db.StringField(max_length=255)
+    lastname = db.StringField(max_length=255)
     password = db.StringField(max_length=255)
     active = db.BooleanField(default=True)
     confirmed_at = db.DateTimeField()

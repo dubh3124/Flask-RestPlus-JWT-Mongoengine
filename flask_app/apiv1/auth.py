@@ -1,8 +1,10 @@
 from flask import jsonify
 from flask_restplus import Resource, Namespace, fields
 from flask_app.models.user import User
-from flask_app import jwt
-from flask_jwt_extended import (create_access_token, create_refresh_token, get_jwt_identity, set_access_cookies,set_refresh_cookies, unset_jwt_cookies, jwt_refresh_token_required)
+from flask_jwt_extended import (JWTManager,create_access_token, create_refresh_token, get_jwt_identity, set_access_cookies,
+                                set_refresh_cookies, unset_jwt_cookies, jwt_refresh_token_required)
+
+jwt = JWTManager()
 
 authapi = Namespace('auth', description='Authorization API')
 
@@ -11,8 +13,8 @@ creds = authapi.model('Credentials', {
     'password': fields.String(required=True, description='Password'),
 })
 
-
 user = User()
+
 
 @jwt.user_loader_callback_loader
 def user_loader_callback(identity):
@@ -21,12 +23,14 @@ def user_loader_callback(identity):
 
     return User.objects(username__exact=identity).get()
 
+
 @jwt.user_loader_error_loader
 def custom_user_loader_error(identity):
     ret = {
         "msg": "User {} not found".format(identity)
     }
     return jsonify(ret), 404
+
 
 @authapi.route('/registration')
 # @api.doc(False)
@@ -57,6 +61,7 @@ class UserRegistration(Resource):
             else:
                 return {'message': 'Oops'}
 
+
 @authapi.route('/login')
 class UserLogin(Resource):
     @authapi.expect(creds)
@@ -65,8 +70,6 @@ class UserLogin(Resource):
         current_user = User.objects(username__exact=data['username'])
         if not current_user:
             return {'message': 'User {} doesn\'t exist'.format(data['username'])}
-
-
 
         if user.verify_hash(data['password'], current_user.get().password):
             access_token = create_access_token(identity=data['username'])
@@ -83,6 +86,7 @@ class UserLogin(Resource):
         else:
             return {'message': 'Wrong credentials'}
 
+
 @authapi.route('/logout')
 class UserLogout(Resource):
     def post(self):
@@ -91,7 +95,8 @@ class UserLogout(Resource):
             unset_jwt_cookies(resp)
             return resp
         except:
-            return jsonify({'error':'Something went wrong deleting token'})
+            return jsonify({'error': 'Something went wrong deleting token'})
+
 
 @authapi.route('/token/refresh')
 class TokenRefresh(Resource):
@@ -100,8 +105,8 @@ class TokenRefresh(Resource):
         try:
             current_user = get_jwt_identity()
             access_token = create_access_token(identity=current_user)
-            resp = jsonify({'message':'Token Refreshed!'})
+            resp = jsonify({'message': 'Token Refreshed!'})
             set_access_cookies(resp, access_token)
             return resp
         except:
-            return jsonify({'error':'Something went wrong refreshing token'})
+            return jsonify({'error': 'Something went wrong refreshing token'})
