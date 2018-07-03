@@ -7,33 +7,15 @@ class Config(object):
         self.TESTING = False
         self.PRODUCTION = False
 
-        self.SECRET_KEY = '{SECRET_KEY}'
-        self.JWT_SECRET_KEY = '023894239j0fm302m3'
+        self.SECRET_KEY = os.getenv('SECRET_KEY')
+        self.JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
         self.JWT_TOKEN_LOCATION=['cookies']
-        self.JWT_ACCESS_CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
+        self.JWT_ACCESS_CSRF_HEADER_NAME = os.getenv('JWT_ACCESS_CSRF_HEADER_NAME')
         self.JWT_COOKIE_CSRF_PROTECT = True
-        self.JWT_COOKIE_DOMAIN = 'dubh3124.com'
+        self.JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN')
 
         self.LOG_LEVEL = logging.DEBUG
-        # Uncomment and fill out for shared DB connection
-        self.MONGODB_SETTINGS = self.dbLocation("cloud", username="dubh3124", password="nwQNzyDNoa4G3fox", db_name="mobileapp")
-
-        # # Uncomment and fill out for custom DB coonnection
-        # self.MONGODB_SETTINGS = self.dbLocation("custom", db_conn="")
-
-
-
-
-    def dbLocation(self, location, db_conn=None, username=None, password=None, db_name=None):
-        if location == "custom":
-            uri = db_conn
-            return self.mongo_from_uri(uri)
-        elif location == "cloud":
-            uri = "mongodb://{username}:{password}@bitjobboard-shard-00-00-dyzis.mongodb.net:27017,bitjobboard-shard-00-01-dyzis.mongodb.net:27017,bitjobboard-shard-00-02-dyzis.mongodb.net:27017/{db_name}?ssl=true&replicaSet=bitjobboard-shard-0&authSource=admin&retryWrites=true" \
-                .format(username=username, password=password, db_name=db_name)
-            return self.mongo_from_uri(uri)
-        else:
-            raise ValueError('Location must be "custom" or "cloud"')
+        self.MONGODB_SETTINGS = self.mongo_from_uri(os.getenv("MONGOURL_DEVELOPMENT"))
 
 
     @staticmethod
@@ -57,7 +39,7 @@ class ProductionConfig(Config):
         self.MAIL_USERNAME = os.getenv('MANDRILL_USERNAME')
         self.MAIL_PASSWORD = os.getenv('MANDRILL_APIKEY')
 
-        self.MONGODB_SETTINGS = self.mongo_from_uri('mongodb://bitregistry-user:BIT123@ds111648.mlab.com:11648/heroku_xc23j00v')
+        self.MONGODB_SETTINGS = self.mongo_from_uri(os.getenv('MONGOURL_PRODUCTION'))
 
 
 class DevelopmentConfig(Config):
@@ -82,11 +64,9 @@ class TestingConfig(Config):
         self.DEBUG = False
         self.TESTING = True
 
-        self.MONGODB_SETTINGS = self.mongo_from_uri(
-            'mongodb://localhost:27017/testing'
-        )
+        self.MONGODB_SETTINGS = self.mongo_from_uri(os.getenv('MONGOURL_TESTING'))
 
-environment = os.getenv('ENVIRONMENT', 'DEVELELOPMENT').lower()
+environment = os.getenv('FLASK_ENV', 'DEVELELOPMENT').lower()
 # Alternatively this may be easier if you are managing multiple aws servers:
 # environment = socket.gethostname().lower()
 
