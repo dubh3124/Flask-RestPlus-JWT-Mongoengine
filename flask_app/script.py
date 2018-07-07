@@ -33,7 +33,7 @@ class PopulateDB():
                   ('joe', 'joe@lp.com', 'password', ['editor'], True, 'Joe', 'Jackson'),
                   ('jill', 'jill@lp.com', 'password', ['author'], True, 'Jill', 'Jane'),
                   ('tiya', 'tiya@lp.com', 'password', [], False, 'Tiya', 'Willams'),
-                  ('dubh3124', 'dubh3124@gmail.com', 'password', [], True, 'Herman', 'Haggerty')):
+                  ('dubh3124', 'dubh3124@lp.com', 'password', [], True, 'Herman', 'Haggerty')):
             user = User(
                 username=u[0],
                 email=u[1],
