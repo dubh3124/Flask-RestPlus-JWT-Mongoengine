@@ -1,0 +1,19 @@
+#https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
+repos:
+-   repo: https://github.com/ambv/black
+    rev: 18.9b0
+    hooks:
+    - id: black
+      language_version: python3.7
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.0.0
+    hooks:
+    - id: flake8
+-   repo: local
+    hooks:
+    -   id: tests
+        name: run tests
+        entry: pytest -v flask_app/
+        language: system
+        types: [python]
+        stages: [push]

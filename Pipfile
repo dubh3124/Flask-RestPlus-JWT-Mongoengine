@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pre-commit = "*"
+
+[packages]
+flask-restplus = "*"
+flask-mongoengine = "*"
+flask-jwt-extended = "*"
+gunicorn = "*"
+pytest = "*"
+click = "*"
+flask = "*"
+flask-mail = "*"
+flask-cors = "*"
+
+[requires]
+python_version = "3.7"
